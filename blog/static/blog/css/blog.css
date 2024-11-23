@@ -1,0 +1,11 @@
+h1 {
+    color: #0b9954;
+}
+
+h2 a {
+    color: #FCA205;
+}
+
+h1, h2, h3, h4 {
+    font-family: 'Lobster', cursive;
+}

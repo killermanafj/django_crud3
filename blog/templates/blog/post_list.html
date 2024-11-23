@@ -1,0 +1,35 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Все Статьи</h1>
+</div>
+{% for post in posts %}
+    <div class="post">
+        <p>Создано: {{ post.created_date }}</p>
+        <h1><a href="{% url 'post_detail' pk=post.pk  %}">{{ post.title }}</a></h1>
+        {% if post.photo %}
+        <p><img src="{{ post.photo.url }}" width="100"></p>
+        {% endif %}
+        <p>{{ post.text|linebreaksbr|truncatewords:10 }}</p>
+    </div>
+{% endfor %}
+<div class="pagination">
+    <span class="step-links">
+        {% if posts.has_previous %}
+            <a href="?page=1">первая</a>
+            <a href="?page={{ posts.previous_page_number }}">предыдущая</a>
+        {% endif %}
+
+        <span class="current">
+            Страница {{ posts.number }} из {{ posts.paginator.num_pages }}.
+        </span>
+
+        {% if posts.has_next %}
+            <a href="?page={{ posts.next_page_number }}">следующая</a>
+            <a href="?page={{ posts.paginator.num_pages }}">последняя</a>
+        {% endif %}
+
+    </span>
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+    {% for prod in product %}
+    <div class="product">
+        <h1>{{ prod.name }}</h1>
+        <p>{{ prod.description }}</p>
+        <p>Цена: {{ prod.price }} руб.</p>
+        <p>Добавлено: {{ prod.created_at }}</p>
+    </div>
+    {% endfor %}
+    <div class="pagination">
+        <span class="step-links">
+            {% if product.has_previous %}
+                <a href="?test=1">первая</a>
+                <a href="?test={{ product.previous_page_number }}">предыдущая</a>
+            {% endif %}
+    
+            <span class="current">
+                Страница {{ product.number }} из {{ product.paginator.num_pages }}.
+            </span>
+    
+            {% if product.has_next %}
+                <a href="?test={{ product.next_page_number }}">следующая</a>
+                <a href="?test={{ product.paginator.num_pages }}">последняя</a>
+            {% endif %}
+    
+        </span>
+    </div>
+{% endblock %}
