@@ -20,7 +20,9 @@
                 <li><a href="{% url 'about' %}">О нас</a></li>
                 <li><a href="{% url 'get_contacts' %}">Контакты</a></li>
                 <li><a href="{% url 'profile' %}">Профиль</a></li>
-                <li><a href="{% url 'post_new' %}" class="top-menu">Добавить</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'post_new' %}" class="top-menu">Добавить</a></li>
+                {% endif %}
             </ul>
         </nav>
         

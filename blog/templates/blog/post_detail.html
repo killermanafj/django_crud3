@@ -9,7 +9,9 @@
 <div class="date">
     <p>Опубликовано: <b>{{ post.created_date }}</b></p>
 </div>
+{% if user.is_authenticated and user == post.author %}
 <p align="center"><a class="btn btn-warning" href="{% url 'post_edit' pk=post.pk %}"</p>
     Редактировать
 </a></p>
+{% endif %}
 {% endblock %}
