@@ -1,8 +1,9 @@
-from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import Post, NewPost
 from django.core.paginator import Paginator
 from .forms import NewPostForm
 from django.utils import timezone
+from django.http import HttpResponseForbidden
 
 def index(request):
     return render(request, 'blog/index.html')
@@ -73,8 +74,10 @@ def post_new(request):
         form = NewPostForm()
     return render(request, 'blog/post_new.html', {'form': form})
 
-def post_edit(request):
+def post_edit(request, pk):
     post = get_object_or_404(NewPost, pk=pk)
+    if post.author != request.user:
+        return HttpResponseForbidden("Вы не можете редактировать эту запись.")
     if request.method == "POST":
         form = NewPostForm(request.POST, instance=post)
         if form.is_valid():
@@ -85,3 +88,16 @@ def post_edit(request):
     else:
         form = NewPostForm(instance=post)
     return render(request, 'blod/post_edit.html', {'form': form})
+
+def post_draft(request):
+    posts = NewPost.objects.filter(published_date__isnull=True).order_by('created_date')
+    return render(request, 'blog/post_draft.html', {'posts': posts})
+
+def post_info(request, pk):
+    post = get_object_or_404(NewPost, pk=pk)
+    return render(request, 'blog/post_info.html', {'post': post})
+
+def post_publish(request, pk):
+    post = get_object_or_404(NewPost, pk=pk)
+    post.publish()
+    return redirect('post_info', pk-pk)

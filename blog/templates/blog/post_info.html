@@ -1,0 +1,11 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+{% if post.published_date %}
+    <div class="date">
+        {{ post.published_date }}
+    </div>
+{% else %}
+    <p align="center"><a class="btn btn-primary" href="{% url 'post_publish' pk=post.pk %}">Publish</a></p>
+{% endif %}
+{% endblock %}
