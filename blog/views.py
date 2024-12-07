@@ -10,7 +10,7 @@ def index(request):
 
 
 def post_list(request):
-    posts = NewPost.objects.all()
+    posts = NewPost.objects.filter(published_date__isnull=False).order_by('-published_date')
     paginator = Paginator(posts, 3)
     page_number = request.GET.get('page')
     posts_list = paginator.get_page(page_number)
@@ -67,7 +67,10 @@ def post_new(request):
                 form.add_error('title', 'Пост с таким заголовком уже существует.')
             else:
                 post = form.save(commit=False)
-                post.published_date = timezone.now()
+                if "save_as_draft" not in request.POST:
+                    post.published_date = timezone.new()
+                else:
+                    post.published_date = timezone.now()
                 post.save()
                 return redirect('post_detail', pk=post.pk)
     else:
@@ -82,7 +85,7 @@ def post_edit(request, pk):
         form = NewPostForm(request.POST, instance=post)
         if form.is_valid():
             post = form.save(cpmmit=False)
-            post.published_date = timezone.now()
+            # post.published_date = timezone.now()
             post.save()
             return redirect('post_detail', pk=post.pk)
     else:
@@ -99,5 +102,14 @@ def post_info(request, pk):
 
 def post_publish(request, pk):
     post = get_object_or_404(NewPost, pk=pk)
+    if post.author != request.user:
+        return HttpResponseForbidden("Вы не можете опубликовать эту статью")
     post.publish()
     return redirect('post_info', pk-pk)
+
+def post_del(request, pk):
+    post = get_object_or_404(NewPost, pk=pk)
+    if post.author != request.user:
+        return HttpResponseForbidden("Вы не можете удалить эту статью")
+    post.delete()
+    return redirect('post_draft')
